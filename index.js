@@ -103,7 +103,11 @@ export default class AutoScrollFlatList extends React.PureComponent {
         this.scrollTop + this.props.threshold >=
         Math.floor(this.contentHeight - this.flatListHeight);
       this.setState(
-        { enabledAutoScrollToEnd: event.nativeEvent.contentOffset.y <= 0 },
+        {
+          enabledAutoScrollToEnd: event.nativeEvent.contentOffset.y <= 0,
+          shouldShowScrollToEndIndicator:
+            event.nativeEvent.contentOffset.y > 500
+        },
         () => {
           // User-defined onScroll event
           const { onScroll } = this.props;
@@ -129,6 +133,7 @@ export default class AutoScrollFlatList extends React.PureComponent {
     );
     this.state = {
       enabledAutoScrollToEnd: true,
+      shouldShowScrollToEndIndicator: false,
       newMessageCount: 0,
       messageAlertY: new Animated.Value(0)
     };
@@ -200,11 +205,12 @@ export default class AutoScrollFlatList extends React.PureComponent {
                   )}
             </TouchableWithoutFeedback>
           )}
-        {showScrollToEndIndicator && !enabledAutoScrollToEnd && (
-          <TouchableWithoutFeedback onPress={() => this.scrollToEnd()}>
-            {indicatorComponent ?? this.renderDefaultIndicatorComponent()}
-          </TouchableWithoutFeedback>
-        )}
+        {showScrollToEndIndicator &&
+          this.state.shouldShowScrollToEndIndicator && (
+            <TouchableWithoutFeedback onPress={() => this.scrollToEnd()}>
+              {indicatorComponent ?? this.renderDefaultIndicatorComponent()}
+            </TouchableWithoutFeedback>
+          )}
       </View>
     );
   }
